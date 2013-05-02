@@ -22,13 +22,14 @@
   assert_args_equivalence/2,
   create/2, 
   delete/3, 
-  policy_changed/3,
+  policy_changed/2,
   description/0, 
   recover/2, 
   remove_bindings/3,
   route/2,
   serialise_events/0,
-  validate/1
+  validate/1,
+  validate_binding/2
 ]).
 
 description() ->
@@ -41,6 +42,8 @@ validate(X) ->
 %    io:format("Validate passed: ~w~n", [X]),
     Exchange = exchange_type(X),
     Exchange:validate(X).
+
+validate_binding(_X, _B) -> ok.
   
 create(Tx, X = #exchange{name = #resource{virtual_host=_VirtualHost, name=_Name}, arguments = _Args}) ->
   XA = exchange_a(X),
@@ -64,7 +67,8 @@ delete(Tx, X, Bs) ->
   Exchange = exchange_type(X),
   Exchange:delete(Tx, X, Bs).
 
-policy_changed(_Tx, _X1, _X2) -> ok.
+%% Only 2 parameters as of RabbitMQ 3.1.0 (BRC)
+policy_changed(_X1, _X2) -> ok.
 
 add_binding(Tx, X, B) ->
   Exchange = exchange_type(X),
